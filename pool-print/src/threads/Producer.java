@@ -1,39 +1,38 @@
 package threads;
 
-import java.util.List;
 import java.util.Random;
 
-public class Producer implements Runnable {
-    private List<String> list;
+import dto.Document;
+import printer.PrinterSystem;
 
-    public Producer(List<String> list) {
-        this.list = list;
+public class Producer implements Runnable {
+    private PrinterSystem printer;
+
+    public Producer(PrinterSystem printer) {
+        this.printer = printer;
     }
 
     @Override
     public void run() {
-        boolean insertion_authorized = tryAdd();
+        while (true) {
+            Random random = new Random();
+            /* int number_random = random.nextInt(100); */
+            // Lógica para chance de produzir o documento e adicioná-lo à fila 70%
+            if(random.nextInt(100) < 70){
+                /* System.out.println("O número gerado aleatoriamente pela Thread "+ Thread.currentThread().getName()+ " foi o número: "+ number_random); */
+                Document document = new Document("documento" + System.currentTimeMillis() + ".docx", random.nextBoolean());
+                printer.addToQueue(document);
+            }else {
+                // Lógica para chance de não produzir o documento 30%
+                System.out.println("A thread " + Thread.currentThread().getName()+ " bateu o dedo na quina e perdeu o documento que estava produzindo");
+            }
 
-        if(insertion_authorized){
-            Random generator = new Random();
-            list.add("file_"+ generator.nextInt(1000)+ ".docx");
-        }else {
-            try{
-                Thread.sleep(100);
-            }catch (InterruptedException e) {
+            try {
+                // Após produzir e adicionar à fila, ou perder o documento, dormirá por um tempo aleatório entre 2 e 3 segundos
+                Thread.sleep(random.nextInt(2000,3000));
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private synchronized boolean tryAdd(){
-        int R = 70;
-        Random generator = new Random();
-        /* Defined that the probability of this thread being able to insert in the queue is 70%
-        that is, if the drawn number is >= 0 and <= 70, it will be able to add to the queue
-        */
-        int random = generator.nextInt(100);
-        /* System.out.println(random); */
-        return random <= R;
     }
 }
