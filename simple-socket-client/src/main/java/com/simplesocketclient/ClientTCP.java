@@ -16,6 +16,7 @@ public class ClientTCP {
         System.out.println("Type it 0 to leave");
         System.out.print("Type the message you want to send:");
         OutputStream outputStream = client.getOutputStream();
+
         String message = input.next();
         if(message.length() != 1 && message != "0"){
           byte[] data = message.getBytes("UTF-8");
