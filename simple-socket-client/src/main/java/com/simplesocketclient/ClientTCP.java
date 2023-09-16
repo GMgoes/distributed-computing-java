@@ -1,5 +1,8 @@
 package com.simplesocketclient;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Scanner;
@@ -11,20 +14,31 @@ public class ClientTCP {
       Socket client = new Socket(host, port);
   
       Scanner input = new Scanner(System.in);
+      InputStream inputStream = client.getInputStream();
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+      BufferedReader reader = new BufferedReader(inputStreamReader);
+
       boolean flag = true;
-      while(flag == true){
-        System.out.println("Type it 0 to leave");
-        System.out.print("Type the message you want to send:");
+      
+      while (flag) {
+        System.out.println("Type '0' to leave");
+        System.out.print("Type the message you want to send: ");
         OutputStream outputStream = client.getOutputStream();
 
         String message = input.next();
-        if(message.length() != 1 && message != "0"){
-          byte[] data = message.getBytes("UTF-8");
-          outputStream.write(data);          
-        }else{
-          flag = false;
+        if (message.equals("0")) {
+            flag = false;
+        } else {
+            byte[] data = message.getBytes("UTF-8");
+            outputStream.write(data);
+            outputStream.flush();
+
+            String serverMessage = reader.readLine();
+            if (serverMessage != null) {
+                System.out.println("Server says: " + serverMessage);
+            }
         }
-      }
+    }
       input.close();
       client.close();
     }

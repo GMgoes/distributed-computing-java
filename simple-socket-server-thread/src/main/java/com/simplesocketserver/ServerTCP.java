@@ -17,7 +17,6 @@ public class ServerTCP {
                 Socket client = server.accept();
                 System.out.println("Client connected: " + client.toString());
 
-                // Crie uma nova thread para atender a este cliente
                 Thread clientThread = new Thread(new ClientHandler(client));
                 clientThread.start();
             }
