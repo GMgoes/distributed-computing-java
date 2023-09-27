@@ -1,0 +1,7 @@
+gusmgoes informacao1.txt 192.168.2.10
+ekler informacao2.txt 192.168.2.25
+deiviston informacao3.txt 192.168.2.35
+priscila video1.mp4 192.168.100.22
+gedson video2.mp4 172.168.2.10
+glasielly imagem1.png 192.168.100.97
+juliana planilha1.csv 192.168.100.87

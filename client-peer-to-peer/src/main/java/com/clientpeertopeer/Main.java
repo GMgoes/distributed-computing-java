@@ -1,49 +1,35 @@
 package com.clientpeertopeer;
 
-import org.apache.commons.net.ftp.FTPFile;
-
-import java.io.BufferedReader;
+import java.net.Socket;
+import java.io.PrintWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
-import org.apache.commons.net.ftp.FTPClient;
-
 public class Main {
+
     public static void main(String[] args) {
-        int port = 21; // everything reminds me u
-        String server = "localhost";
-        String user = "gusmgoes";
-        String password = "1234";
+        final String SERVER_ADDRESS = "localhost";
+        final int PORT = 21; // everything reminds me u
 
-        FTPClient ftpClient = new FTPClient();
+        try (Socket socket = new Socket(SERVER_ADDRESS, PORT);
+             BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter outputWriter = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in))) {
 
-        try {
-            ftpClient.connect(server, port);
-            ftpClient.login(user, password);
-            System.out.println("Hey, I successfully logged in");
+            System.out.println("Connected to the FTP server");
+            System.out.print("Enter the desired file name: ");
+            String desiredFile = userInput.readLine();
 
-            String remoteFilePath = "/teste.txt";
+            outputWriter.println(desiredFile);
 
-            InputStream inputStream = ftpClient.retrieveFileStream(remoteFilePath);
-            if (inputStream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                reader.close();
-                inputStream.close();
+            String response = inputBuffer.readLine();
+            if (!response.isEmpty()) {
+                System.out.println("The file " + desiredFile + " belongs to " + response);
             } else {
-                System.err.println("Unable to locate this file, path: " + remoteFilePath);
+                System.out.println("The file " + desiredFile + " was not found");
             }
-
-            ftpClient.logout();
-            ftpClient.disconnect();
         } catch (IOException e) {
-            System.err.println("Error in I/O operation: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
