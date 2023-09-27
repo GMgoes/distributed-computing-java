@@ -1,0 +1,1 @@
+Hi, I am a file inside the general folder on the FTP server
