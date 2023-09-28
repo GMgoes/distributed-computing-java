@@ -1,33 +1,56 @@
 package com.clientpeertopeer;
 
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Scanner;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 public class Main {
 
+    private static final String SERVER_IP = "localhost";
+    private static final int SERVER_PORT = 21; // everything reminds me u
+
     public static void main(String[] args) {
-        final String SERVER_ADDRESS = "localhost";
-        final int PORT = 21; // everything reminds me u
+        Scanner scanner = new Scanner(System.in);
 
-        try (Socket socket = new Socket(SERVER_ADDRESS, PORT);
-             BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter outputWriter = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in))) {
+        try (Socket serverConnection = new Socket(SERVER_IP, SERVER_PORT);
+             BufferedReader serverReader = new BufferedReader(new InputStreamReader(serverConnection.getInputStream()));
+             PrintWriter serverWriter = new PrintWriter(serverConnection.getOutputStream(), true)) {
 
-            System.out.println("Connected to the FTP server");
-            System.out.print("Enter the desired file name: ");
-            String desiredFile = userInput.readLine();
+            System.out.println("Connected to the FTP Server");
 
-            outputWriter.println(desiredFile);
+            while (true) {
+                System.out.print("Enter 'get' to request a file, 'register' to register a new file, or 'quit' to exit: ");
+                String input = scanner.nextLine();
 
-            String response = inputBuffer.readLine();
-            if (!response.isEmpty()) {
-                System.out.println("The file " + desiredFile + " belongs to " + response);
-            } else {
-                System.out.println("The file " + desiredFile + " was not found");
+                if ("get".equalsIgnoreCase(input)) {
+                    System.out.print("Enter the name of the desidered file: ");
+                    String desideredFile = scanner.nextLine();
+
+                    serverWriter.println("GET " + desideredFile);
+
+                    String response = serverReader.readLine();
+                    System.out.println(response);
+
+                } else if ("register".equalsIgnoreCase(input)) {
+                    System.out.print("Enter the file name to register: ");
+                    String fileName = scanner.nextLine();
+                    InetAddress address = InetAddress.getLocalHost();
+                    String ipAddress = address.getHostAddress();
+                    serverWriter.println("REGISTER " + fileName + " " + ipAddress);
+
+                    String response = serverReader.readLine();
+                    System.out.println(response);
+                    
+                } else if ("quit".equalsIgnoreCase(input)) {
+                    break;
+                } else {
+                    System.out.println("Invalid command");
+                }
             }
+            scanner.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
