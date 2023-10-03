@@ -1,4 +1,1 @@
-user_fa3df80f-379c-422f-9025-ef71eef8d5a3,planilha.csv
-user_82d5fe39-1e0b-47b1-ba72-44f8fb301042,GUS [B@6576fe71
-user_6db61676-d52a-4b85-a89f-84a03ff77e27,gus [B@6576fe71
-user_66c7f564-f073-4d3a-bc3d-dbf3c4a1fe17,gus 192.168.101.69
+192.168.56.1,22,planilha.csv

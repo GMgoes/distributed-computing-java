@@ -3,6 +3,7 @@ package com.peertopeer;
 import java.util.Map;
 import java.util.UUID;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -82,29 +83,30 @@ public class Main {
                 String request = reader.readLine();
 
                 if (request.startsWith("GET")) {
-                    String ownerFile = "";
                     String desiredFile = request.substring(4).trim();
+                    String owner = null;
+                    String[] ownerPortAndIP = new String[2];
                     
                     for (Map.Entry<String, String[]> entry : userFilesMap.entrySet()) {
                         String key = entry.getKey();
                         String[] values = entry.getValue();
-                        
+
                         for (String value : values) {
                             if(value.equals(desiredFile)){
-                                ownerFile = key;
+                                owner = key;
+                                ownerPortAndIP = values;
                             }
                         }
                     }
 
-                    if (ownerFile != null) {
-                        StringBuilder response = new StringBuilder("File owned by " + ownerFile);
+                    if (owner != null) {
+                        StringBuilder response = new StringBuilder("OWNER " + owner + " " + ownerPortAndIP[0] + " " + ownerPortAndIP[1]);
                         writer.println(response.toString());
                     } else {
-                        writer.println("User not found");
+                        writer.println("File not found or user not found");
                     }
                 } else if (request.startsWith("REGISTER")) {
                     String informationUser = request.substring(9).trim();
-                    System.out.println(informationUser);
 
                     UUID userId = UUID.randomUUID();
                     String username = "user_" + userId.toString();
