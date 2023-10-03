@@ -62,8 +62,6 @@ public class Main {
                         System.out.println("File not found or error in response.");
                     }
                 } else if ("register".equalsIgnoreCase(input)) {
-                    // Código para registrar um arquivo no servidor (como você já tem)
-                    // ...
                 } else if ("quit".equalsIgnoreCase(input)) {
                     break;
                 } else {
